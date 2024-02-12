@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 //using ZinkovskiyTask.ZinkovskiyTask.Services;
 using ZinkovskiyTask.DTO;
@@ -27,17 +28,16 @@ namespace ZinkovskiyTask.Controllers
         public ActionResult<Student_DTO> GetStudentById(long id)
         {
             var student = _studentService.GetStudentById(id);
-            if (student == null)
-                return NotFound();
-
-            return Ok(student);
+            var response = new ObjectResult(student.Data.ToStudent());
+            response.StatusCode = student.StatusCode;
+            return response;
         }
 
         [HttpPost]
         public ActionResult<Student_DTO> CreateStudent(StudentAddUpdate_DTO newSt)
         {
-            _studentService.AddStudent(newSt);
-            return Ok(newSt);
+            var new_student = _studentService.AddStudent(newSt);
+            return Ok(new_student);
         }
 
         [HttpPut("{id}")]

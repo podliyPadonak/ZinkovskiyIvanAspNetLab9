@@ -6,7 +6,7 @@ namespace ZinkovskiyTask
     {
         Student GetById(long id);
         IEnumerable<Student> GetAll();
-        void Add(Student student);
+        Student Add(Student student);
         void Update(long id, Student student);
         void Delete(long id);
         long Count();
@@ -23,13 +23,14 @@ namespace ZinkovskiyTask
             _context = context;
         }
 
-        public void Add(Student student)
+        public Student Add(Student student)
         {
-            Student st = new Student { Age = student.Age, Name = student.Name };
+            var max_id = _context.Students.OrderByDescending(x => x.Id).FirstOrDefault().Id;
+            Student st = new Student { Id = max_id + 1, Age = student.Age, Name = student.Name };
             _context.Students.Add(st);
             _context.SaveChanges();
 
-            return;
+            return st;
         }
 
         public void Delete(long id)

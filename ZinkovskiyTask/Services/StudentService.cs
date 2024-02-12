@@ -8,8 +8,8 @@ namespace ZinkovskiyTask
     public interface IStudentService
     {
         IEnumerable<Student_DTO> GetAllStudents();
-        BaseResponse GetStudentById(long id);
-        void AddStudent(StudentAddUpdate_DTO student);
+        BaseResponse<Student_DTO> GetStudentById(long id);
+        Student_DTO AddStudent(StudentAddUpdate_DTO student);
         void UpdateStudent(long id, StudentAddUpdate_DTO student);
         void DeleteStudent(long id);
     }
@@ -36,22 +36,23 @@ namespace ZinkovskiyTask
             return list_students_dto;
         }
 
-        public BaseResponse GetStudentById(long id)
+        public BaseResponse<Student_DTO> GetStudentById(long id)
         {
             var student = _context_students_repository.GetById(id);
             if(student == null)
             {
-                var response = new BaseResponse(null, 404);
+                var response = new BaseResponse<Student_DTO>(null, 404);
                 return response;
             }
-            return new BaseResponse(student.ToStudentDTO(), 200);   //ToStudentDTO();
+            return new BaseResponse<Student_DTO>(student.ToStudentDTO(), 200);   //ToStudentDTO();
         }
 
-        public void AddStudent(StudentAddUpdate_DTO student)
+        public Student_DTO AddStudent(StudentAddUpdate_DTO student)
         {
             var st = student.ToStudent();
-            _context_students_repository.Add(st);
+            var added_student = _context_students_repository.Add(st);
             _context_students_repository.SaveChanges();
+            return added_student.ToStudentDTO();
         }
 
         public void UpdateStudent(long id, StudentAddUpdate_DTO student)
